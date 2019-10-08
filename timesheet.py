@@ -29,7 +29,7 @@ def login(username, password):
     timesheet_link = waitMain.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="MainContent_pnlNormal"]/table/tbody/tr[4]/td/ul/li[1]/a'))) 
     timesheet_link.click()
 
-def enter_timesheets(start='09', end='18', lunch='01'):
+def enter_timesheets(start='09', end='18', lunch='01', submit=False):
 
     timesheet_period = waitMain.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="MainContent_cboAvailableTimeSheets"]'))) 
     timesheet_period.click()
@@ -90,8 +90,9 @@ def enter_timesheets(start='09', end='18', lunch='01'):
     alert = driver.switch_to.alert
     alert.accept()
 
-    submit = waitMain.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="MainContent_ASPxRoundPanel1_cmdSubmitTimesheet"]'))) 
-    submit.click()
+    if submit:
+        submit = waitMain.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="MainContent_ASPxRoundPanel1_cmdSubmitTimesheet"]'))) 
+        submit.click()
 
 if __name__ == "__main__":
     
@@ -118,6 +119,12 @@ if __name__ == "__main__":
         required=True,
         type=str
     )
+    parser.add_argument(
+        "-s",
+        "--submit",
+        action="store_true",
+        default=False
+    )
 
     args = parser.parse_args()
 
@@ -125,6 +132,6 @@ if __name__ == "__main__":
 
     login(args.username, args.password)
     
-    enter_timesheets()
+    enter_timesheets(submit=args.submit)
 
     driver.close()
